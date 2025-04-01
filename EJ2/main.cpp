@@ -1,188 +1,107 @@
 #include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <iomanip>
-using namespace std;
-
-class Estudiante {
-private:
-    string nombreCompleto;
-    int legajo;
-    vector<pair<string, float>> cursosYNotas;
-
-public:
-    Estudiante(string nombre, int legajo_) : nombreCompleto(nombre), legajo(legajo_) {}
-
-    void agregarCurso(string nombreCurso, float nota) {
-        cursosYNotas.push_back({nombreCurso, nota});
-    }
-
-    float calcularPromedio() const {
-        if (cursosYNotas.empty()) return 0.0f;
-        float suma = 0;
-        for (auto& c : cursosYNotas)
-            suma += c.second;
-        return suma / cursosYNotas.size();
-    }
-
-    string getNombre() const { return nombreCompleto; }
-    int getLegajo() const { return legajo; }
-
-    // Para ordenar alfabéticamente
-    bool operator<(const Estudiante& otro) const {
-        return nombreCompleto < otro.nombreCompleto;
-    }
-
-    // Para imprimir por pantalla
-    friend ostream& operator<<(ostream& os, const Estudiante& est) {
-        os << "Nombre: " << est.nombreCompleto
-           << ", Legajo: " << est.legajo
-           << ", Promedio: " << fixed << setprecision(2) << est.calcularPromedio();
-        return os;
-    }
-};
-
-class Curso {
-private:
-    vector<Estudiante*> estudiantes;
-    static const int capacidadMaxima = 20;
-
-public:
-    ~Curso() {
-        // Liberar memoria
-        for (auto est : estudiantes) {
-            delete est;
-        }
-    }
-
-    bool estaCompleto() const {
-        return estudiantes.size() >= capacidadMaxima;
-    }
-
-    void inscribirEstudiante() {
-        if (estaCompleto()) {
-            cout << "El curso está completo. No se puede inscribir más estudiantes." << endl;
-            return;
-        }
-
-        string nombre;
-        int legajo;
-        cout << "Ingrese nombre completo: ";
-        cin.ignore();
-        getline(cin, nombre);
-        cout << "Ingrese legajo: ";
-        cin >> legajo;
-
-        if (estaInscripto(legajo)) {
-            cout << "Ya hay un estudiante con ese legajo." << endl;
-            return;
-        }
-
-        Estudiante* nuevo = new Estudiante(nombre, legajo);
-
-        int cantCursos;
-        cout << "¿Cuántos cursos desea cargar? ";
-        cin >> cantCursos;
-        for (int i = 0; i < cantCursos; ++i) {
-            string curso;
-            float nota;
-            cout << "Curso " << i + 1 << ": ";
-            cin.ignore();
-            getline(cin, curso);
-            cout << "Nota final: ";
-            cin >> nota;
-            nuevo->agregarCurso(curso, nota);
-        }
-
-        estudiantes.push_back(nuevo);
-        cout << "Estudiante inscripto correctamente." << endl;
-    }
-
-    void desinscribirEstudiante() {
-        int legajo;
-        cout << "Ingrese legajo del estudiante a eliminar: ";
-        cin >> legajo;
-
-        for (auto it = estudiantes.begin(); it != estudiantes.end(); ++it) {
-            if ((*it)->getLegajo() == legajo) {
-                delete *it;
-                estudiantes.erase(it);
-                cout << "Estudiante eliminado del curso." << endl;
-                return;
-            }
-        }
-        cout << "Estudiante no encontrado." << endl;
-    }
-
-    bool estaInscripto(int legajo) const {
-        for (auto est : estudiantes)
-            if (est->getLegajo() == legajo)
-                return true;
-        return false;
-    }
-
-    void buscarEstudiante() const {
-        int legajo;
-        cout << "Ingrese legajo a buscar: ";
-        cin >> legajo;
-        for (auto est : estudiantes) {
-            if (est->getLegajo() == legajo) {
-                cout << *est << endl;
-                return;
-            }
-        }
-        cout << "No se encontró el estudiante." << endl;
-    }
-
-    void listarEstudiantes() const {
-        if (estudiantes.empty()) {
-            cout << "No hay estudiantes inscriptos." << endl;
-            return;
-        }
-
-        vector<Estudiante*> copia = estudiantes;
-        sort(copia.begin(), copia.end(), [](Estudiante* a, Estudiante* b) {
-            return *a < *b;
-        });
-
-        cout << "--- Lista de estudiantes (orden alfabético) ---" << endl;
-        for (auto est : copia) {
-            cout << *est << endl;
-        }
-    }
-};
-
-void mostrarMenu() {
-    cout << "\n--- MENU ---" << endl;
-    cout << "1. Inscribir estudiante" << endl;
-    cout << "2. Desinscribir estudiante" << endl;
-    cout << "3. Buscar estudiante por legajo" << endl;
-    cout << "4. Ver si el curso está completo" << endl;
-    cout << "5. Listar estudiantes ordenados alfabéticamente" << endl;
-    cout << "0. Salir" << endl;
-    cout << "Opción: ";
-}
+#include <limits>
+#include "Curso.h"
 
 int main() {
-    Curso curso;
+    std::vector<Curso*> cursos;
     int opcion;
 
     do {
-        mostrarMenu();
-        cin >> opcion;
-        switch (opcion) {
-            case 1: curso.inscribirEstudiante(); break;
-            case 2: curso.desinscribirEstudiante(); break;
-            case 3: curso.buscarEstudiante(); break;
-            case 4:
-                cout << (curso.estaCompleto() ? "El curso está completo." : "Aún hay cupos disponibles.") << endl;
-                break;
-            case 5: curso.listarEstudiantes(); break;
-            case 0: cout << "Fin del programa." << endl; break;
-            default: cout << "Opción inválida." << endl;
+        std::cout << "\n--- GESTOR DE CURSOS ---\n";
+        std::cout << "1. Crear nuevo curso\n";
+        std::cout << "2. Eliminar curso\n";
+        std::cout << "3. Listar cursos existentes\n";
+        std::cout << "4. Copiar un curso\n";
+        std::cout << "5. Agregar estudiante a un curso\n";
+        std::cout << "6. Quitar estudiante de un curso\n";
+        std::cout << "7. Buscar estudiante por legajo en un curso\n";
+        std::cout << "8. Ver si un curso está completo\n";
+        std::cout << "9. Listar estudiantes de un curso\n";
+        std::cout << "10. Salir\nOpción: ";
+        while (!(std::cin >> opcion)) {
+            std::cout << "Entrada inválida. Ingrese un número entre 1 y 10: ";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
-    } while (opcion != 0);
+        std::cin.ignore();
+
+        std::string nombre;
+        Curso* curso;
+
+        switch (opcion) {
+            case 1:
+                std::cout << "Nombre del curso: ";
+                std::getline(std::cin, nombre);
+                cursos.push_back(new Curso(nombre));
+                break;
+            case 2:
+                std::cout << "Nombre del curso a eliminar: ";
+                std::getline(std::cin, nombre);
+                for (auto it = cursos.begin(); it != cursos.end(); ++it) {
+                    if ((*it)->getNombre() == nombre) {
+                        delete *it;
+                        cursos.erase(it);
+                        std::cout << "Curso eliminado.\n";
+                        break;
+                    }
+                }
+                break;
+            case 3:
+                if (cursos.empty()) std::cout << "No hay cursos creados.\n";
+                else for (auto c : cursos) std::cout << c->getNombre() << std::endl;
+                break;
+            case 4:
+                std::cout << "Nombre del curso a copiar: ";
+                std::getline(std::cin, nombre);
+                curso = buscarCurso(cursos, nombre);
+                if (curso) cursos.push_back(new Curso(*curso));
+                else std::cout << "Curso no encontrado.\n";
+                break;
+            case 5:
+                std::cout << "Curso destino: ";
+                std::getline(std::cin, nombre);
+                curso = buscarCurso(cursos, nombre);
+                if (curso) curso->inscribirEstudiante(cursos);
+                else std::cout << "Curso no encontrado.\n";
+                break;
+            case 6:
+                std::cout << "Curso: ";
+                std::getline(std::cin, nombre);
+                curso = buscarCurso(cursos, nombre);
+                if (curso) curso->desinscribirEstudiante();
+                else std::cout << "Curso no encontrado.\n";
+                break;
+            case 7:
+                std::cout << "Curso: ";
+                std::getline(std::cin, nombre);
+                curso = buscarCurso(cursos, nombre);
+                if (curso) curso->buscarEstudiante();
+                else std::cout << "Curso no encontrado.\n";
+                break;
+            case 8:
+                std::cout << "Curso: ";
+                std::getline(std::cin, nombre);
+                curso = buscarCurso(cursos, nombre);
+                if (curso)
+                    std::cout << (curso->estaCompleto() ? "Curso completo.\n" : "Curso con vacantes.\n");
+                else std::cout << "Curso no encontrado.\n";
+                break;
+            case 9:
+                std::cout << "Curso: ";
+                std::getline(std::cin, nombre);
+                curso = buscarCurso(cursos, nombre);
+                if (curso) curso->listarEstudiantes();
+                else std::cout << "Curso no encontrado.\n";
+                break;
+            case 10:
+                for (auto c : cursos) delete c;
+                cursos.clear();
+                std::cout << "Programa finalizado.\n";
+                break;
+            default:
+                std::cout << "Opción inválida.\n";
+        }
+    } while (opcion != 10);
 
     return 0;
 }
