@@ -14,6 +14,8 @@ private:
 
 public:
     Estudiante(std::string nombre, int legajo_);
+    
+    void listarCursos() const;
 
     void agregarCurso(std::string nombreCurso, float nota);
     float calcularPromedio() const;

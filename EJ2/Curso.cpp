@@ -2,6 +2,7 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include "EstudiantesGlobal.h"
 
 Curso::Curso(std::string nombre) : nombreCurso(nombre) {}
 
@@ -47,15 +48,22 @@ void Curso::inscribirEstudiante(std::vector<Curso*>& todosLosCursos) {
     }
     std::cin.ignore();
 
-    for (auto curso : todosLosCursos) {
-        if (curso->estaInscripto(legajo)) {
-            std::cout << "Ya existe un estudiante con ese legajo en otro curso.\n";
-            return;
+    // Buscar si el estudiante ya existe en la lista global
+    Estudiante* estudianteExistente = nullptr;
+    for (auto est : estudiantesGlobal) {
+        if (est->getLegajo() == legajo && est->getNombre() == nombre) {
+            estudianteExistente = est;
+            break;
         }
     }
 
-    Estudiante* nuevo = new Estudiante(nombre, legajo);
+    // Si no existe, crear uno nuevo y añadirlo a la lista global
+    if (!estudianteExistente) {
+        estudianteExistente = new Estudiante(nombre, legajo);
+        estudiantesGlobal.push_back(estudianteExistente);  // Añadir a la lista global
+    }
 
+    // Agregar el curso y la nota al estudiante existente
     float nota;
     std::cout << "Ingrese la nota del estudiante para el curso \"" << nombreCurso << "\": ";
     while (!(std::cin >> nota) || nota < 0 || nota > 10) {
@@ -65,11 +73,10 @@ void Curso::inscribirEstudiante(std::vector<Curso*>& todosLosCursos) {
     }
     std::cin.ignore();
 
-    nuevo->agregarCurso(nombreCurso, nota);
-    estudiantes.push_back(nuevo);
+    estudianteExistente->agregarCurso(nombreCurso, nota);
+    estudiantes.push_back(estudianteExistente);  // Añadir al curso actual
     std::cout << "Estudiante inscripto.\n";
 }
-
 void Curso::desinscribirEstudiante() {
     int legajo;
     std::cout << "Ingrese legajo a eliminar: ";

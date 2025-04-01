@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include "Curso.h"
+#include "EstudiantesGlobal.h"
 
 int main() {
     std::vector<Curso*> cursos;
@@ -14,7 +15,7 @@ int main() {
         std::cout << "4. Copiar un curso\n";
         std::cout << "5. Agregar estudiante a un curso\n";
         std::cout << "6. Quitar estudiante de un curso\n";
-        std::cout << "7. Buscar estudiante por legajo en un curso\n";
+        std::cout << "7. Ver cursos y promedio de un estudiante por legajo\n";
         std::cout << "8. Ver si un curso está completo\n";
         std::cout << "9. Listar estudiantes de un curso\n";
         std::cout << "10. Salir\nOpción: ";
@@ -27,7 +28,8 @@ int main() {
 
         std::string nombre;
         Curso* curso;
-
+        Estudiante* estudianteEncontrado = nullptr;
+        
         switch (opcion) {
             case 1:
                 std::cout << "Nombre del curso: ";
@@ -72,11 +74,28 @@ int main() {
                 else std::cout << "Curso no encontrado.\n";
                 break;
             case 7:
-                std::cout << "Curso: ";
-                std::getline(std::cin, nombre);
-                curso = buscarCurso(cursos, nombre);
-                if (curso) curso->buscarEstudiante();
-                else std::cout << "Curso no encontrado.\n";
+                int legajoBuscar;
+                std::cout << "Ingrese el legajo del estudiante para ver sus cursos: ";
+                while (!(std::cin >> legajoBuscar)) {
+                    std::cout << "Entrada inválida. Ingrese un número entero para el legajo: ";
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                }
+                std::cin.ignore(); // Limpiar el buffer
+            
+                // Buscar al estudiante por legajo
+                for (auto est : estudiantesGlobal) {
+                    if (est->getLegajo() == legajoBuscar) {
+                        estudianteEncontrado = est;
+                        break;
+                    }
+                }
+            
+                if (estudianteEncontrado) {
+                    estudianteEncontrado->listarCursos(); // Mostrar los cursos y el promedio
+                } else {
+                    std::cout << "Estudiante con legajo " << legajoBuscar << " no encontrado.\n";
+                }
                 break;
             case 8:
                 std::cout << "Curso: ";

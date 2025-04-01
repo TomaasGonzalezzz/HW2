@@ -7,6 +7,21 @@ void Estudiante::agregarCurso(std::string nombreCurso, float nota) {
     cursosYNotas.push_back({nombreCurso, nota});
 }
 
+void Estudiante::listarCursos() const {
+    if (cursosYNotas.empty()) {
+        std::cout << "El estudiante no está inscrito en ningún curso.\n";
+        return;
+    }
+
+    std::cout << "Cursos de " << nombreCompleto << " (Legajo: " << legajo << "):\n";
+    for (const auto& curso : cursosYNotas) {
+        std::cout << "Curso: " << curso.first << ", Nota: " << curso.second << std::endl;
+    }
+
+    // Mostrar el promedio
+    std::cout << "Promedio general: " << calcularPromedio() << std::endl;
+}
+
 float Estudiante::calcularPromedio() const {
     if (cursosYNotas.empty()) return 0.0f;
     float suma = 0;
