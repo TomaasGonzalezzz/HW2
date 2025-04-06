@@ -60,7 +60,7 @@ void Curso::inscribirEstudiante(std::vector<Curso*>& todosLosCursos) {
     // Si no existe, crear uno nuevo y añadirlo a la lista global
     if (!estudianteExistente) {
         estudianteExistente = new Estudiante(nombre, legajo);
-        estudiantesGlobal.push_back(estudianteExistente);  // Añadir a la lista global
+        estudiantesGlobal.push_back(estudianteExistente);  
     }
 
     // Agregar el curso y la nota al estudiante existente
@@ -74,7 +74,7 @@ void Curso::inscribirEstudiante(std::vector<Curso*>& todosLosCursos) {
     std::cin.ignore();
 
     estudianteExistente->agregarCurso(nombreCurso, nota);
-    estudiantes.push_back(estudianteExistente);  // Añadir al curso actual
+    estudiantes.push_back(estudianteExistente); 
     std::cout << "Estudiante inscripto.\n";
 }
 void Curso::desinscribirEstudiante() {

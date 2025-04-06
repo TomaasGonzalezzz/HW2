@@ -1,0 +1,21 @@
+# Private
+
+Se utilizó para atributos internos que no deben ser visibles fuera de la clase que los define.
+
+Ejemplo: contadorMostrarInfo en CajaDeAhorro, y cajaAhorro en CuentaCorriente.
+
+Esto evita accesos no controlados o modificaciones desde fuera de la clase
+
+# Protected
+
+Se aplicó a atributos como balance y titularCuenta en la clase base.
+
+La razón fue permitir el acceso directo desde las clases derivadas sin exponerlos al exterior.
+
+# Public
+
+Todos los métodos que deben ser accesibles desde el programa principal o desde fuera de las clases fueron declarados como public.
+
+Ejemplo: depositar, retirar, mostrarInfo, y los métodos de acceso (getBalance, setBalance).
+
+

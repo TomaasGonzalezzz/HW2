@@ -1,0 +1,31 @@
+
+# 2.b.v – ¿Qué tipo de copia se implementó para el objeto `Curso`?
+
+En este trabajo, se implementó un constructor de copia superficial (shallow copy) para la clase `Curso`. Esto significa que al copiar un curso, se copia el puntero al mismo objeto `Estudiante`, en lugar de duplicar todo su contenido.
+
+# Justificación
+
+En este sistema, un mismo estudiante puede estar inscrito en varios cursos al mismo tiempo.
+Si se hiciera una copia profunda, cada curso tendría su propia versión del estudiante, lo que generaría inconsistencias (por ejemplo, distintas notas o promedios para la misma persona).
+Al compartir los mismos punteros a `Estudiante`, todos los cursos acceden a la misma información actualizada de cada alumno.
+
+# Implementación (`Curso.cpp`)
+
+```cpp
+Curso::Curso(const Curso& otro)
+    : nombreCurso(otro.nombreCurso + " (copia)"), estudiantes(otro.estudiantes) {}
+
+```
+# 2.c – ¿Qué tipo de relación existe entre los objetos curso y estudiante?
+
+La relación entre Curso y Estudiante fue modelada como una agregación compartida, permitiendo reutilizar objetos, evitar duplicación de datos y reflejar correctamente una situación del mundo real donde un alumno puede formar parte de múltiples cursos al mismo tiempo.
+
+Esta elección permite un diseño más limpio, coherente y escalable, sin comprometer la integridad de los datos.
+
+# Cualidades
+
+# 1. Independencia de existencia: los alumnos se gestionan en una lista global de estudiantes
+
+# 2. Múltiples asociaciones: un estudiante puede estar inscripto en varios cursos
+
+# 3. No hay propiedad exclusiva: los cursos no destruyen a los estudiantes cuando se eliminan
