@@ -26,6 +26,8 @@ public:
     bool operator<(const Estudiante& otro) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Estudiante& est);
+
+    friend class Curso;
 };
 
 #endif

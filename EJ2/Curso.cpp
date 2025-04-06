@@ -86,17 +86,29 @@ void Curso::desinscribirEstudiante() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     std::cin.ignore();
+
     for (auto it = estudiantes.begin(); it != estudiantes.end(); ++it) {
         if ((*it)->getLegajo() == legajo) {
-            delete *it;
+            Estudiante* est = *it;
+
+            // 1. Eliminar del curso actual
             estudiantes.erase(it);
-            std::cout << "Estudiante eliminado.\n";
+
+            // 2. Eliminar el curso actual del vector cursosYNotas del estudiante
+            for (auto itCurso = est->cursosYNotas.begin(); itCurso != est->cursosYNotas.end(); ++itCurso) {
+                if (itCurso->first == nombreCurso) {
+                    est->cursosYNotas.erase(itCurso);
+                    break;
+                }
+            }
+
+            std::cout << "Estudiante desinscripto del curso.\n";
             return;
         }
     }
-    std::cout << "Estudiante no encontrado.\n";
-}
 
+    std::cout << "Estudiante no encontrado en este curso.\n";
+}
 void Curso::buscarEstudiante() const {
     int legajo;
     std::cout << "Ingrese legajo a buscar: ";
