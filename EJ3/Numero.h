@@ -1,5 +1,3 @@
-
-// Numero.h
 #ifndef NUMERO_H
 #define NUMERO_H
 

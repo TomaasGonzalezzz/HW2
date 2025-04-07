@@ -1,5 +1,4 @@
 
-// main.cpp
 #include <iostream>
 #include "Numero.h"
 
